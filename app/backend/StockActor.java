@@ -78,9 +78,6 @@ public class StockActor extends AbstractPersistentActor {
                 .build();
     }
 
-
-
-
     @Override
     public PartialFunction<Object, BoxedUnit> receiveCommand() {
 
