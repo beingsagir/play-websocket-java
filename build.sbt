@@ -1,34 +1,34 @@
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+import BuildSettings._
 
 name := "reactive-stocks-java8"
 
-version := "1.0-SNAPSHOT"
+version := "1.0"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.6"
 
-val akka = "2.3.6"
+lazy val common = (project in file("common"))
+  .settings(commonSettings:_*)
 
-libraryDependencies ++= Seq(
-  javaWs,
-  "org.webjars" % "bootstrap" % "2.3.1",
-  "org.webjars" % "flot" % "0.8.0",
-  "com.typesafe.akka" %% "akka-testkit" % akka % "test",
-  "com.typesafe.akka" %% "akka-cluster" % akka,
-  "com.typesafe.akka" %% "akka-contrib" % akka,
-  "com.typesafe.akka" %% "akka-persistence-experimental" % akka exclude("org.iq80.leveldb","leveldb"),
-  "org.iq80.leveldb"  %  "leveldb" % "0.7"
-)
+lazy val frontend = (project in file("frontend"))
+  .enablePlugins(PlayJava)
+  .dependsOn(common)
+  .aggregate(common)
+  .settings(commonSettings:_*)
+  .settings(
+    libraryDependencies ++= Dependencies.frontendProjectDeps,
+    routesGenerator := InjectedRoutesGenerator,
+    LessKeys.compress := true
+  )
 
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+lazy val backend = (project in file("backend"))
+  .dependsOn(common)
+  .aggregate(common)
+  .settings(commonSettings:_*)
+  .settings(fork in run := true)
+  .settings(libraryDependencies ++= Dependencies.backendProjectDeps)
 
-LessKeys.compress := true
 
-initialize := {
-  val _ = initialize.value
-  if (sys.props("java.specification.version") != "1.8")
-    sys.error("Java 8 is required for this project.")
-}
-
-addCommandAlias("rb", "runMain backend.MainClusterManager 2551 backend")
-
-addCommandAlias("sj", "runMain backend.journal.SharedJournalApp 2552 shared-journal")
+addCommandAlias("f", ";project frontend; run 9000")
+addCommandAlias("b1", ";project backend; runMain services.MainClusterManager 2551")
+addCommandAlias("b2", ";project backend; runMain services.MainClusterManager 2552")
+addCommandAlias("sj", ";project backend; runMain journal.SharedJournalApp 2553")
