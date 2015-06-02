@@ -1,3 +1,4 @@
+import com.typesafe.sbteclipse.core.EclipsePlugin.EclipseKeys
 import sbt.Keys._
 import sbt._
 
@@ -14,7 +15,8 @@ object BuildSettings {
   val commonSettings = Seq(
     scalaVersion := "2.11.6",
     shellPrompt := BuildSettings._projectPrompt,
-    javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+    javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint"),
+    EclipseKeys.skipParents in ThisBuild := false
   )
 
   initialize := {
