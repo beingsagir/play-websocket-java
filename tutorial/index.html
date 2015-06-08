@@ -54,37 +54,6 @@
         The message is parsed and depending on whether the message contains the stock history or a stock update, a stock chart is either created or updated.  The charts are created using the <strong>Flot</strong> JavaScript charting library.  Using CoffeeScript, jQuery, and Flot makes it easy to build Reactive UI in the browser that can receive WebSocket push events and update the UI in real-time.
     </p>
 </div>
-<div>
-    <h2>Reactive Requests</h2>
-
-    <p>
-        When a web server gets a request, it allocates a thread to handle the request and produce a response.  In a typical model the thread is allocated for the entire duration of the request and response, even if the web request is waiting for some other resource.  A Reactive Request is a typical web request and response, but handled in an asynchronous and non-blocking way on the server.  This means that when the thread for a web request is not actively being used, it can be released and reused for something else.<br/>
-        In the Reactive Stocks application the service which determines the stock sentiments is a Reactive Request.  The route is defined in the <a href="#code/conf/routes" class="shortcut">routes</a> file:
-<pre><code>GET /sentiment/:symbol controllers.StockSentiment.get(symbol)</code></pre>
-        A <code>GET</code> request to <code>/sentiment/GOOG</code> will call <code>get("GOOG")</code> on the <a href="#code/app/controllers/StockSentiment.java" class="shortcut">StockSentiment.java</a> controller.  That method begins with:
-<pre><code>public static Promise&lt;Result&gt; get(String symbol) {</code></pre>
-        This controller will return a <code>Promise<Result></code> which is a handle to something that will produce a <code>Result</code> in the future.  The <code>Promise</code> provides a way to do asynchronous handling but doesn't necessarily have to be non-blocking.  Often times web requests need to talk to other systems (databases, web services, etc).  If a thread can't be deallocated while waiting for those other systems to respond, then it is blocking.<br/>
-        In this case a request is made to Twitter and then for each tweet, another request is made to a sentiment service.  All of these requests, including the request from the browser, are all handled as Reactive Requests so that the entire pipeline is Reactive (asynchronous and non-blocking).  This is called Reactive Composition.
-    </p>
-</div>
-<div>
-    <h2>Reactive Composition</h2>
-
-    <p>
-        Combining multiple Reactive Requests together is Reactive Composition.  The <a href="#code/app/controllers/StockSentiment.java" class="shortcut">StockSentiment</a> controller does Reactive Composition since it receives a request, makes a request to Twitter for tweets about a stock, and then for each tweet it makes a request to a sentiment service.  All of these requests are Reactive Requests.  None use threads when they are waiting for a response.  Play Promises, together with Java 8 lambdas and method references, make it very easy and elegant to do Reactive Composition.  The basic structure is:
-<pre><code>fetchTweets(symbol)
-.flatMap(StockSentiment::fetchSentiments)
-.map(StockSentiment::averageSentiment)</code></pre>
-        Because the web client library in Play, <code>WS</code>, is asynchronous and non-blocking, all of the requests needed to get a stock's sentiments are Reactive Requests.  Combined together these Reactive Requests are Reactive Composition.
-    </p>
-</div>
-<div>
-    <h2>Reactive UI - Sentiments</h2>
-
-    <p>
-        The client-side of Reactive Requests and Reactive Composition is no different than the non-Reactive model.  The browser makes an Ajax request to the server and then calls a JavaScript function when it receives a response.  In the Reactive Stocks application, when a stock chart is flipped over it makes the request for the stock's sentiments.  That is done using jQuery's <code>ajax</code> method in the <a href="#code/app/assets/javascripts/index.coffee" class="shortcut">index.coffee</a> file.  When the request returns data the <code>success</code> handler updates the UI.
-    </p>
-</div>
 <!-- <div>
     <h2>Inspect the App</h2>
 
