@@ -22,14 +22,7 @@ body {
 }
 
 .flip-container {
-  .perspective(1000);
   margin-bottom: 20px;
-  &:hover .flipper {
-    .transform(10deg);
-  }
-  &.flipped .flipper {
-  .transform(180deg);
-  }
 }
 
 .flipper {
@@ -77,6 +70,10 @@ body {
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+.details-holder {
+  transform-style: preserve-3d;
 }
 
 .chart-holder {
