@@ -1,14 +1,14 @@
 $ ->
-  ws = new WebSocket $("body").data("ws-url")
-  ws.onmessage = (event) ->
-    message = JSON.parse event.data
-    switch message.type
-      when "stockhistory"
-        populateStockHistory(message)
-      when "stockupdate"
-        updateStockChart(message)
-      else
-        console.log(message)
+#  ws = new WebSocket $("body").data("ws-url")
+#  ws.onmessage = (event) ->
+#    message = JSON.parse event.data
+#    switch message.type
+#      when "stockhistory"
+#        populateStockHistory(message)
+#      when "stockupdate"
+#        updateStockChart(message)
+#      else
+#        console.log(message)
 
   $("#addsymbolform").submit (event) ->
     event.preventDefault()

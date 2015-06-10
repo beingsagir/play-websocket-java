@@ -14,12 +14,4 @@ public class Application extends Controller {
     public Result index() {
         return ok(views.html.index.render());
     }
-
-    public WebSocket<JsonNode> ws() {
-        return WebSocket.whenReady((in, out) -> {
-            // Write message to server
-            out.write(Json.newObject().put("message", "Message from the server."));
-        });
-    }
-
 }
