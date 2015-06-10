@@ -5,7 +5,6 @@ import akka.actor.*;
 import akka.actor.ActorRef;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
-import java.util.Optional;
 import play.libs.Akka;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -29,14 +28,6 @@ public class Application extends Controller {
             for (String stockSymbol : defaultStocks) {
                 StocksActor.stocksActor().tell(new Stock.Watch(stockSymbol), userActor);
             }
-
-            // send all WebSocket message to the UserActor
-            in.onMessage(jsonNode -> {
-                // parse the JSON into Stock.Watch
-                Stock.Watch watchStock = new Stock.Watch(jsonNode.get("symbol").textValue());
-                // send the watchStock message to the StocksActor
-                StocksActor.stocksActor().tell(watchStock, userActor);
-            });
         });
     }
 
