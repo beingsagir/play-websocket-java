@@ -19,8 +19,6 @@ import utils.StockQuote;
  */
 public class StockActor extends AbstractActor {
 
-    final HashSet<ActorRef> watchers = new HashSet<ActorRef>();
-
     final Deque<Double> stockHistory = FakeStockQuote.history(50);
 
     public StockActor(String symbol) {
@@ -28,8 +26,6 @@ public class StockActor extends AbstractActor {
     }
 
     public StockActor(String symbol, StockQuote stockQuote) {
-        Cancellable stockTick = scheduleTick();
-
         receive(ReceiveBuilder
             .match(Stock.Latest.class, latest -> {
                 // Generate new price
@@ -39,17 +35,6 @@ public class StockActor extends AbstractActor {
 
                 // Log new stock price
                 Logger.debug("New price: " + newPrice);
-            })
-            .match(Stock.Watch.class, watch -> {
-                // reply with the stock history, and add the sender as a watcher
-                sender().tell(new Stock.History(symbol, stockHistory), self());
-                watchers.add(sender());
             }).build());
-    }
-
-    private Cancellable scheduleTick() {
-        return context().system().scheduler().schedule(
-            Duration.Zero(), Duration.create(75, TimeUnit.MILLISECONDS),
-            self(), Stock.latest, context().dispatcher(), null);
     }
 }

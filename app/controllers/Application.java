@@ -22,12 +22,8 @@ public class Application extends Controller {
 
     public WebSocket<JsonNode> ws() {
         return WebSocket.whenReady((in, out) -> {
-            // create a new UserActor and give it the default stocks to watch
+            // create a new UserActor and send message to the client
             final ActorRef userActor = Akka.system().actorOf(Props.create(UserActor.class, out));
-            List<String> defaultStocks = Play.application().configuration().getStringList("default.stocks");
-            for (String stockSymbol : defaultStocks) {
-                StocksActor.stocksActor().tell(new Stock.Watch(stockSymbol), userActor);
-            }
         });
     }
 
