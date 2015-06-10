@@ -1,7 +1,6 @@
 package actors;
 
 import java.util.Deque;
-import java.util.Optional;
 
 public class Stock {
     public static final class Latest {
@@ -37,11 +36,4 @@ public class Stock {
             this.symbol = symbol;
         }
     }
-
-    public static final class Unwatch {
-
-        public Unwatch() {}
-    }
-
-    public static final Unwatch unwatch = new Unwatch();
 }

@@ -37,12 +37,6 @@ public class Application extends Controller {
                 // send the watchStock message to the StocksActor
                 StocksActor.stocksActor().tell(watchStock, userActor);
             });
-
-            // on close, tell the userActor to shutdown
-            in.onClose(() -> {
-                StocksActor.stocksActor().tell(Stock.unwatch, userActor);
-                Akka.system().stop(userActor);
-            });
         });
     }
 

@@ -7,7 +7,6 @@ import akka.japi.pf.ReceiveBuilder;
 import java.util.concurrent.TimeUnit;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Optional;
 
 import scala.concurrent.duration.Duration;
 import utils.FakeStockQuote;
@@ -43,13 +42,6 @@ public class StockActor extends AbstractActor {
                 // reply with the stock history, and add the sender as a watcher
                 sender().tell(new Stock.History(symbol, stockHistory), self());
                 watchers.add(sender());
-            })
-            .match(Stock.Unwatch.class, unwatch -> {
-                watchers.remove(sender());
-                if (watchers.isEmpty()) {
-                    stockTick.cancel();
-                    context().stop(self());
-                }
             }).build());
     }
 

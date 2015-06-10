@@ -25,10 +25,6 @@ public class StocksActor extends AbstractActor {
                 Optional.ofNullable(getContext().getChild(symbol)).orElseGet(
                         () -> context().actorOf(Props.create(StockActor.class, symbol), symbol)
                 ).forward(watch, context());
-            })
-            .match(Stock.Unwatch.class, unwatch -> {
-                // forward this message to the associated StockActor, or otherwise to everyone
-                getContext().getChildren().forEach(stock -> stock.forward(unwatch, context()));
             }).build());
     }
 }
