@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.Deque;
 import java.util.HashSet;
 
+import play.Logger;
 import scala.concurrent.duration.Duration;
 import utils.FakeStockQuote;
 import utils.StockQuote;
@@ -31,12 +32,13 @@ public class StockActor extends AbstractActor {
 
         receive(ReceiveBuilder
             .match(Stock.Latest.class, latest -> {
-                // add a new stock price to the history and drop the oldest
+                // Generate new price
                 Double newPrice = stockQuote.newPrice(stockHistory.peekLast());
                 stockHistory.add(newPrice);
                 stockHistory.remove();
-                // notify watchers
-                watchers.forEach(watcher -> watcher.tell(new Stock.Update(symbol, newPrice), self()));
+
+                // Log new stock price
+                Logger.debug("New price: " + newPrice);
             })
             .match(Stock.Watch.class, watch -> {
                 // reply with the stock history, and add the sender as a watcher

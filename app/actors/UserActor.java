@@ -16,15 +16,6 @@ public class UserActor extends AbstractActor {
 
     public UserActor(WebSocket.Out<JsonNode> out) {
         receive(ReceiveBuilder
-            .match(Stock.Update.class, stockUpdate -> {
-                // push the stock to the client
-                JsonNode message =
-                    Json.newObject()
-                        .put("type", "stockupdate")
-                        .put("symbol", stockUpdate.symbol)
-                        .put("price", stockUpdate.price);
-                out.write(message);
-            })
             .match(Stock.History.class, stockHistory -> {
                 // push the history to the client
                 ObjectNode message =

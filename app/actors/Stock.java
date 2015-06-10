@@ -9,16 +9,6 @@ public class Stock {
 
     public static final Latest latest = new Latest();
 
-    public static final class Update {
-        public final String symbol;
-        public final Double price;
-
-        public Update(String symbol, Double price) {
-            this.symbol = symbol;
-            this.price = price;
-        }
-    }
-
     public static final class History {
         public final String symbol;
         public final Deque<Double> history;
